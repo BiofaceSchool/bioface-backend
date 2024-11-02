@@ -1,0 +1,2 @@
+TAG = "Auth"
+ENDPOINT = "/auth"
