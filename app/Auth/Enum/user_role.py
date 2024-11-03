@@ -1,5 +1,7 @@
 from enum import Enum
+from enum import Enum
 
-class RoleEnum(str, Enum):
-    STUDENT = 'STUDENT'
-    ADMIN = 'ADMIN'
+class UserRoleEnum(str, Enum):
+    ADMIN = "admin"
+    USER = "user"
+    GUEST = "guest"

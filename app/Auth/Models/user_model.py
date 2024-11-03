@@ -3,18 +3,31 @@ import uuid
 from sqlalchemy import Column, String, Enum
 from sqlalchemy.orm import relationship
 from ..Enum.user_role import UserRoleEnum
-from ....config.database_config import Base
+from typing import Optional
+from config.database_config import Base
 
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()), unique=True)
-    name = Column(String, nullable=False)
-    lastname = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    institution_name = Column(String, nullable=False)
-    profile_picture = Column(String, nullable=True)
-    role = Column(Enum(UserRoleEnum), default=UserRoleEnum.STUDENT)
+    id: str = Column(String(length=36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()), unique=True)
+    name: str = Column(String(length=100), nullable=False)
+    lastname: str = Column(String(length=100) , nullable=False)
+    email: str = Column(String(length=100), nullable=False, unique=True)
+    password: str = Column(String(length=100), nullable=False)
+    institution_name: str = Column(String(length=100), nullable=False)
+    profile_picture: Optional[str] = Column(String(length=100), nullable=True)
+    role: UserRoleEnum = Column(Enum(UserRoleEnum), default=UserRoleEnum.ADMIN)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'lastname': self.lastname,
+            'email': self.email,
+            'institution_name': self.institution_name,
+            'profile_picture': self.profile_picture,
+            'role': self.role.value  # Asegúrate de obtener el valor del Enum si es necesario
+        }
 
+    class Config:
+        from_attributes = True 
