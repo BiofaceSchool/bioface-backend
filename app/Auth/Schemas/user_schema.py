@@ -1,11 +1,15 @@
+from typing import Optional
+from pydantic import BaseModel, Field
 
-class UserSchema:
-    def __init__(self, id, name, lastname, email, password, institution_name, profile_picture, role):
-        self.id = id
-        self.name = name,
-        self.lastname = lastname,
-        self.institution_name = institution_name
-        self.email = email
-        self.password = password
-        self.profile_picture = profile_picture
-        self.role = role
+from app.Auth.Enum.user_role import UserRoleEnum
+
+class UserSchema(BaseModel):
+        id: str
+        name: str
+        lastname: str
+        email: str
+        password: str
+        institution_name: str
+        profile_picture: str | None
+        role: UserRoleEnum | None
+    
