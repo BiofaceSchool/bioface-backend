@@ -1,0 +1,8 @@
+# app/config/constants.py
+MAX_NAME_LENGTH = 100
+MAX_LOCATION_LENGTH = 100
+MAX_CONTACT_LENGTH = 100
+
+#Routes
+FACULTY_TAG = "Faculty"
+FACULTY_ENDPOINT = "/faculty"

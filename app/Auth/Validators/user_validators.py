@@ -4,14 +4,15 @@ from http import HTTPStatus
 from sqlalchemy.orm import Session
 
 from app.Auth.Models.user_model import User
+from app.Auth.Repository.auth_repository import AuthRepository
 from app.Auth.Schemas.register_schema import RegisterRequest
 from app.Auth.Schemas.user_schema import UserSchema
-from app.shared.Validator.error_factory import ValidationError
+from app.shared.Validator.error_factory import DatabaseError, ValidationError
 
-def validate_all_user_fields(user: RegisterRequest, db: Session):
+def validate_all_user_fields(user: RegisterRequest, auth_repo: AuthRepository):
     validate_name(user.name)
     validate_name(user.lastname)
-    validate_email(user.email, db)
+    validate_email(user.email, auth_repo)
     validate_password(user.password)
     validate_institution_name(user.institution_name)
 
@@ -22,7 +23,7 @@ def validate_login(user: UserSchema, password: str):
 
 def validate_user_exists(user):
     if not user:
-        raise ValidationError("User not found",HTTPStatus.NOT_FOUND)
+        raise DatabaseError("User not found",HTTPStatus.NOT_FOUND)
 
 def validate_password_correct(password: str, hashed_password: str):
     if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
@@ -61,7 +62,7 @@ def validate_institution_name(institution_name: str):
     if not re.match(r'^[A-Za-z\s]+$', institution_name):
         raise ValidationError("Institution name must not contain special characters.", HTTPStatus.BAD_REQUEST)
 
-def validate_email_not_taken(email: str, db: Session):
-    existing_user = db.query(User).filter(User.email == email).first()
+def validate_email_not_taken(email: str, auth_repo: AuthRepository):
+    existing_user = auth_repo.get_by_attribute("email", email)
     if existing_user:
         raise ValidationError("Email already registered", HTTPStatus.BAD_REQUEST)

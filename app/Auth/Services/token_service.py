@@ -5,8 +5,7 @@ from fastapi.responses import JSONResponse
 import jwt
 from datetime import datetime, timedelta
 from app.Auth.Schemas.login_schema import LoginResponse, TokenInfo
-from app.Auth.Validators.token_validators import validate_cookie_token
-from ..auth_config import SECRET_JWT_KEY
+from ..auth_constants import SECRET_JWT_KEY
 
 HOUR = 1000 * 60 * 60  
 
