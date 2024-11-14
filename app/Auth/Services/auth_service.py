@@ -2,26 +2,23 @@
 
 import bcrypt
 from fastapi import HTTPException, Request, Response
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import Session
 from app.Auth.Models.user_model import User
 from app.Auth.Schemas.login_schema import LoginRequest, LoginResponse, TokenInfo
 from app.Auth.Schemas.register_schema import RegisterRequest
-from app.Auth.Validators.token_validators import validate_cookie_token
-from app.Auth.Validators.user_validators import validate_all_user_fields, validate_login
-from app.Auth.auth_config import SALT_ROUNDS
 from app.Auth.Services.token_service import TokenService
-from app.shared.service.base_service import BaseService
+from app.Auth.Validators.user_validators import validate_all_user_fields, validate_login
+from app.Auth.auth_constants import SALT_ROUNDS
+from ..Repository.auth_repository import AuthRepository
 
-class AuthService(BaseService[User]):
+class AuthService():
     def __init__(self, db: Session):
-        super().__init__(db)
-
-
-    
-    def login(self, request: LoginRequest):
-        user = self.get_by_attribute(User, 'email', request.email)
+        self.auth_repo = AuthRepository(db)
         
+    def login(self, request: LoginRequest):
+
+        user = self.auth_repo.get_by_email(request.email)
+            
         # Validate login credentials
         validate_login(user, request.password)
 
@@ -29,32 +26,29 @@ class AuthService(BaseService[User]):
         user_data = LoginResponse(id=user.id, email=user.email, role=user.role)
         return TokenService.create_token(user_data)
 
-
   
     
     def register(self, request: RegisterRequest):
-
-        try:
-            validate_all_user_fields(request, self.db)
-
-            new_user = User(**request.dict())
-            new_user.password = bcrypt.hashpw(request.password.encode('utf-8'), bcrypt.gensalt(SALT_ROUNDS))
+   
+        validate_all_user_fields(request, self.auth_repo)
+        new_user = User(**request.dict())
+        new_user.password = bcrypt.hashpw(request.password.encode('utf-8'), bcrypt.gensalt(SALT_ROUNDS))
 
 
-            self.add_to_data_base(new_user) 
+        self.auth_repo.add(new_user)
 
-            token = TokenService.create_token(LoginResponse(**new_user.to_dict()))
-            print(new_user.password)
+        token = TokenService.create_token(LoginResponse(**new_user.to_dict()))
 
-            return token
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+        return token
+
         
     def logout(self, response: Response):
         try:            
             TokenService.remove_token_cookie(response)
+        except HTTPException as e:
+            raise e  
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
     async def protect_user(self, request: Request):

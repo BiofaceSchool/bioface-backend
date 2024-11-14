@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app.Auth.Schemas.register_schema import RegisterRequest
@@ -9,33 +9,37 @@ from config.dependency_config import get_db
 
 auth = APIRouter()
 
-
-@auth.post('/login', status_code=status.HTTP_200_OK,response_model = str)
+@auth.post('/login', status_code=status.HTTP_200_OK)
 async def login(request: LoginRequest, db: Session = Depends(get_db)):
-
     auth_service = AuthService(db)
     return auth_service.login(request)
-    
   
-    
 
-@auth.post('/register', response_model=str)
+@auth.post('/register', status_code=status.HTTP_201_CREATED)
 def register(request: RegisterRequest, db: Session = Depends(get_db)):
     try:
         auth_service = AuthService(db)
         response = auth_service.register(request)
         return response
-    except ConnectionError as e:
-        raise ConnectionError(f"{e} Ocurrió un error en la conexión a la base de datos")
-
-@auth.post('/logout')
+    except HTTPException as e:  
+        raise e  
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+  
+@auth.post('/logout', status_code=status.HTTP_200_OK)
 async def logout( response: Response, db: Session = Depends(get_db)):
-    auth_service = AuthService(db)
-    auth_service.logout(response)  # Llama al método de logout
-    return {"message": "Logged out successfully."}
-    
+    try :
 
-@auth.post("/protected")
+        auth_service = AuthService(db)
+        auth_service.logout(response)  # Llama al método de logout
+        return {"message": "Logged out successfully."}
+    except HTTPException as e:  
+        raise e  
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+  
+
+@auth.post("/protected", status_code=status.HTTP_200_OK)
 async def protectess(request: Request):
     user = request.state.user 
     user = TokenInfo(**user)

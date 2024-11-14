@@ -2,8 +2,7 @@ from datetime import datetime
 from http import HTTPStatus
 from fastapi import Request
 import jwt
-from app.Auth.Schemas.login_schema import TokenInfo
-from app.Auth.auth_config import SECRET_JWT_KEY
+from app.Auth.auth_constants import SECRET_JWT_KEY
 from app.shared.Validator.error_factory import ValidationError
 
 def validate_token_existence(token: str):
