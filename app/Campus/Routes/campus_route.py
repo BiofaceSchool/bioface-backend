@@ -21,6 +21,7 @@ def get_all_campuses(db: Session = Depends(get_db)):
     response = campus_service.get_all_campuses()
     return response
 
+
 @campus.get('/get/{id}', status_code=status.HTTP_200_OK, response_model=CampusResponse)
 def get_campus_by_id(id: int, db: Session = Depends(get_db)):
     campus_service = CampusService(db)

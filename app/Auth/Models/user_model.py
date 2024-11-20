@@ -1,13 +1,13 @@
 from datetime import datetime
 import uuid
-from sqlalchemy import Column, String, Enum
+from sqlalchemy import JSON, Column, String, Enum
 from sqlalchemy.orm import relationship
 from ..Enum.user_role import UserRoleEnum
 from typing import Optional
 from config.database_config import Base
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
 
     id: str = Column(String(length=36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()), unique=True)
     name: str = Column(String(length=100), nullable=False)
@@ -17,6 +17,7 @@ class User(Base):
     institution_name: str = Column(String(length=100), nullable=False)
     profile_picture: Optional[str] = Column(String(length=100), nullable=True)
     role: UserRoleEnum = Column(Enum(UserRoleEnum), default=UserRoleEnum.ADMIN)
+
 
     def to_dict(self):
         return {
