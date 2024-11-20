@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.Auth.Models.user_model import User
 from app.Auth.Schemas.login_schema import LoginRequest, LoginResponse, TokenInfo
 from app.Auth.Schemas.register_schema import RegisterRequest
-from app.Auth.Schemas.user_schema import UserSchema
+from app.Auth.Schemas.user_schema import UpdateUserSchema, UserSchema
 from app.Auth.Services.token_service import TokenService
 from app.Auth.Validators.user_validators import validate_all_user_fields, validate_login
 from app.Auth.auth_constants import SALT_ROUNDS
@@ -49,13 +49,15 @@ class AuthService():
         except Exception as e:
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
     async def protect_user(self, request: Request):
         user = request.state.user
         user_info = TokenInfo(**user)
         
         return {"message": "You are authenticated", "user   ": user_info.email}
     
-
     def get_by_id(self, id: str):
         return self.auth_repo.get_user_by_id(id)
+    
+    def update_user(self, updated_user: UpdateUserSchema, user_id: str):
+        user = self.auth_repo.update_user(User(**updated_user.dict()), user_id)
+        return user

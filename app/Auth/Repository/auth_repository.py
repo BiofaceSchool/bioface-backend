@@ -32,3 +32,9 @@ class AuthRepository(BaseRepository[User]):
         if user:
             return user.email
         return None
+    
+    def update_user(self, updated_item: User, item_id: str):
+        user = self.get_user_by_id(item_id)
+        user = updated_item
+        self.db.commit()
+        return user
