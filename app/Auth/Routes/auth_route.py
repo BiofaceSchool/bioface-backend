@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.Auth.Schemas.register_schema import RegisterRequest
 from app.Auth.Schemas.login_schema import LoginRequest, TokenInfo
-from app.Auth.Schemas.user_schema import UserSchema
+from app.Auth.Schemas.user_schema import UpdateUserSchema, UserSchema
 from app.Auth.Services.auth_service import AuthService
 from config.dependency_config import get_db
 
@@ -52,3 +52,10 @@ async def get_my_info(request: Request, db: Session = Depends(get_db)):
     auth_service = AuthService(db)
 
     return auth_service.get_by_id(user.id)
+
+@auth.put("/user/me", response_model=UserSchema)
+async def update_my_info(request: Request, updated_request: UpdateUserSchema, db: Session = Depends(get_db)):
+    user = request.state.user 
+    user = TokenInfo(**user)
+    auth_service = AuthService(db)
+    return auth_service.update_user(updated_request, user.id)
