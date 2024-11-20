@@ -24,7 +24,7 @@ class BaseRepository(Generic[T]):
     def get_by_id(self, item_id: int):
         try:
             result = self.db.query(self.model_class).get(item_id)
-            self.validator.check_not_found(result, self.model_class.__name__, item_id=item_id) 
+            self.validator.check_not_found(result, self.model_class.__name__, item_id=item_id)
             return result
         except Exception as e:
             self.validator.handle_error(e, 'retrieving', self.model_class.__name__, item_id=item_id)

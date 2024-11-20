@@ -4,6 +4,7 @@ from app.Campus.Repository.campus_repository import CampusRepository
 from app.Faculties.Models.faculty_model import Faculty
 from app.Faculties.Repository.faculty_repository import FacultyRepository
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 
 from app.Faculties.Schemas.faculty_schema import FacultyRequest
 from app.shared.Validator.error_factory import ValidationError

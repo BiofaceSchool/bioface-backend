@@ -42,11 +42,10 @@ def validate_email(email: str, db: Session):
 
 def validate_password(password: str):
     if not isinstance(password, str):
-        raise ValueError("Password must be a string.")
+        raise ValidationError("Password must be a string.")
 
     if not any(char.isdigit() for char in password):
-        raise ValueError("Password must contain at least one digit.")
-    # Add other password validation checks as needed
+        raise ValidationError("Password must contain at least one digit.")
 
     if len(password) < 8:
         raise ValidationError("Password must have at least 8 characters.", HTTPStatus.BAD_REQUEST)
@@ -63,6 +62,6 @@ def validate_institution_name(institution_name: str):
         raise ValidationError("Institution name must not contain special characters.", HTTPStatus.BAD_REQUEST)
 
 def validate_email_not_taken(email: str, auth_repo: AuthRepository):
-    existing_user = auth_repo.get_by_attribute("email", email)
+    existing_user = auth_repo.verify_email(email)
     if existing_user:
         raise ValidationError("Email already registered", HTTPStatus.BAD_REQUEST)

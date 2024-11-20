@@ -9,8 +9,6 @@ class LoginResponse(BaseModel):
     email: str
     role : str
 
-
-
 class LoginRequest(BaseModel):
     email: str
     password: str
