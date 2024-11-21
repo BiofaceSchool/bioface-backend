@@ -5,6 +5,7 @@ from app.Campus.Schemas.campus_schema import CampusRequest, CampusResponse
 from app.Campus.Services.campus_service import CampusService
 from app.Faculties.Schemas.faculty_schema import FacultyResponse
 from config.dependency_config import get_db
+from typing import List
 
 
 campus = APIRouter()
@@ -15,7 +16,7 @@ def add_campus(request: CampusRequest, university_id: int, db: Session = Depends
     response = campus_service.add_campus(request, university_id)
     return response
 
-@campus.get('/get-all', response_model=list[CampusResponse])
+@campus.get('/get-all', response_model=List[CampusResponse])
 def get_all_campuses(db: Session = Depends(get_db)):
     campus_service = CampusService(db)
     response = campus_service.get_all_campuses()
@@ -40,7 +41,7 @@ def delete_campus(id: int, db: Session = Depends(get_db)):
     response = campus_service.delete_campus(id)
     return response
 
-@campus.get('/get-faculties/{campus_id}', status_code=status.HTTP_200_OK, response_model=list[FacultyResponse])
+@campus.get('/get-faculties/{campus_id}', status_code=status.HTTP_200_OK, response_model=List[FacultyResponse])
 def get_faculties_by_campus(campus_id: int, db: Session = Depends(get_db)):
     campus_service = CampusService(db)
     response = campus_service.get_faculties_by_campus(campus_id)

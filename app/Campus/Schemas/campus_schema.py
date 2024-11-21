@@ -1,5 +1,6 @@
 
 from pydantic import BaseModel, model_validator
+from typing import List  # Agregar esta importación
 
 from app.Faculties.Schemas.faculty_schema import FacultyResponse
 from app.Faculties.Validator.faculty_validator import FacultyValidator
@@ -25,7 +26,7 @@ class CampusResponse(BaseModel):
 class CampusDetailResponse(BaseModel):
     id: int
     name: str
-    faculties: list[FacultyResponse]
+    faculties: List[FacultyResponse]  # Cambiar list[FacultyResponse] a List[FacultyResponse]
 
     class Config:
         orm_mode = True

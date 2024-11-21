@@ -16,6 +16,7 @@ def validate_all_user_fields(user: RegisterRequest, auth_repo: AuthRepository):
     validate_password(user.password)
     validate_institution_name(user.institution_name)
 
+
 def validate_login(user: UserSchema, password: str):
     validate_user_exists(user)
     validate_password_correct(password, user.password)

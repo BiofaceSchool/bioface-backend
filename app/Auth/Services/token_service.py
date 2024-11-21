@@ -2,8 +2,10 @@
 
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
-import jwt
+
 from datetime import datetime, timedelta
+
+import jwt
 from app.Auth.Schemas.login_schema import LoginResponse, TokenInfo
 from ..auth_constants import SECRET_JWT_KEY
 

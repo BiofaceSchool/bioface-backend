@@ -17,7 +17,7 @@ class User(Base):
     institution_name: str = Column(String(length=100), nullable=False)
     profile_picture: Optional[str] = Column(String(length=100), nullable=True)
     role: UserRoleEnum = Column(Enum(UserRoleEnum), default=UserRoleEnum.ADMIN)
-
+    embeddings: Optional[list] = Column(JSON, nullable=True) 
 
     def to_dict(self):
         return {
