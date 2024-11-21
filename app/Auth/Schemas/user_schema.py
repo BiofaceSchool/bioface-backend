@@ -8,8 +8,8 @@ class UserSchema(BaseModel):
      lastname: str
      email: str
      institution_name: str
-     profile_picture: str | None
-     role: UserRoleEnum | None
+     profile_picture: Optional[str] 
+     role: Optional[UserRoleEnum]
 
 class UpdateUserSchema(BaseModel):
     name: Optional[str]

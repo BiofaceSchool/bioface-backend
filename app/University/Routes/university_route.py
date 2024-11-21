@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
+from typing import List
 
 
 from app.University.Schemas.university_schema import UniversityDetailResponse, UniversityRequest, UniversityResponse
@@ -15,7 +16,7 @@ def add_university(request: UniversityRequest, db: Session = Depends(get_db)):
     response = university_service.add_university(request)
     return response
 
-@university.get('/get_all', status_code=status.HTTP_200_OK, response_model=list[UniversityResponse])
+@university.get('/get_all', status_code=status.HTTP_200_OK, response_model=List[UniversityResponse])
 def get_all_universities(db: Session = Depends(get_db)):
     university_service = UniversityService(db)
     response = university_service.get_all_universities()

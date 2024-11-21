@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.Auth.Models.user_model import User
+from app.Auth.Schemas.user_schema import UpdateUserSchema
 from app.shared.Repository.base_repository import BaseRepository
 
 
@@ -12,7 +13,7 @@ class AuthRepository(BaseRepository[User]):
     def get_by_email(self, email: str):
         return self.db.query(User).filter(User.email == email).first()
     
-    def get_user_by_id(self, id: str):
+    def get_user_by_id(self, id: str) -> User:
         try :
             result = self.db.query(User).get(id)
             self.validator.check_not_found(result, self.model_class.__name__, item_id=id)  # Using check_not_found here
@@ -33,8 +34,11 @@ class AuthRepository(BaseRepository[User]):
             return user.email
         return None
     
-    def update_user(self, updated_item: User, item_id: str):
+    def update_user(self, updated_item: UpdateUserSchema, item_id: str):
         user = self.get_user_by_id(item_id)
-        user = updated_item
+        for field in updated_item.dict():
+            setattr(user, field, updated_item.dict()[field])
         self.db.commit()
+        self.db.refresh(user)
         return user
+    

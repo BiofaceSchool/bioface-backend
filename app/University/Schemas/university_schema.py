@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List  # Agregar esta importación
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 
@@ -30,7 +30,7 @@ class UniversityDetailResponse(BaseModel):
     name: str
     location: str
     contact: str
-    campuses: list[CampusDetailResponse]
+    campuses: List[CampusDetailResponse]
     
     class Config:
         orm_mode = True

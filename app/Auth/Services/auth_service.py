@@ -1,5 +1,4 @@
 # app/Auth/Services/auth_service.py
-
 import bcrypt
 from fastapi import HTTPException, Request, Response
 from sqlalchemy.orm import Session
@@ -39,7 +38,6 @@ class AuthService():
         token = TokenService.create_token(LoginResponse(**new_user.to_dict()))
 
         return token
-
         
     def logout(self, response: Response):
         try:            
@@ -52,12 +50,5 @@ class AuthService():
     async def protect_user(self, request: Request):
         user = request.state.user
         user_info = TokenInfo(**user)
-        
         return {"message": "You are authenticated", "user   ": user_info.email}
     
-    def get_by_id(self, id: str):
-        return self.auth_repo.get_user_by_id(id)
-    
-    def update_user(self, updated_user: UpdateUserSchema, user_id: str):
-        user = self.auth_repo.update_user(User(**updated_user.dict()), user_id)
-        return user

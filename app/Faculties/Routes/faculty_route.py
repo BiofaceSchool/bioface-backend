@@ -6,6 +6,7 @@ from app.Faculties.Schemas.faculty_schema import FacultyRequest, FacultyResponse
 
 from app.Faculties.Services.faculty_service import FacultyService
 from config.dependency_config import get_db
+from typing import List
 
 
 faculty = APIRouter()
@@ -19,7 +20,7 @@ def add_faculty(request: FacultyRequest, campus_id: int, db: Session = Depends(g
     except Exception as e:
         return {"message": {"error": str(e)}}
 
-@faculty.get('/get-all', response_model=list[FacultyResponse])
+@faculty.get('/get-all', response_model=List[FacultyResponse])
 def get_all_faculties(db: Session = Depends(get_db)):
     faculty_service = FacultyService(db)
     response = faculty_service.get_all_faculties()
